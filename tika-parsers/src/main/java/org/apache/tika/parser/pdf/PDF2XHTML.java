@@ -86,6 +86,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             // Extract text using a dummy Writer as we override the
             // key methods to output to the given content
             // handler.
+            System.out.println("hereiam");
             if (config.getDetectAngles()) {
                 pdf2XHTML = new AngleDetectingPDF2XHTML(document, handler, context, metadata, config);
             } else {
@@ -184,10 +185,12 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             throw new IOException("Unable to end a paragraph", e);
         }
     }
-
+/*
     @Override
     protected void writeString(String text) throws IOException {
         try {
+            //text = text + "tika-hack";
+            text = text + "<embed charX>";
             xhtml.characters(text);
         } catch (SAXException e) {
             throw new IOException(
@@ -195,48 +198,95 @@ class PDF2XHTML extends AbstractPDF2XHTML {
         }
     }
 
+ */
     @Override
-    protected void writeCharacters(TextPosition text) throws IOException {
+    protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
         try {
-            xhtml.characters(text.getUnicode());
+            StringBuilder te = new StringBuilder("newline: ");
+            StringBuilder te1 = new StringBuilder("");
+            float linePositiony = 0;
+            float linePositionx = 0;
+            te1.append("[");
+            for (TextPosition s : textPositions){
+                //System.out.println(text.getYDirAdj());
+                te1.append("{'char':(").append(s.getWidthDirAdj()).append(", ").append(s.getHeightDir()).append(" ),").append("'line':(").append(s.getXDirAdj()).append(", ").append(s.getYDirAdj()).append(")},");
+                linePositiony = s.getYDirAdj();
+                linePositionx = s.getXDirAdj();
+                te.append(s);
+            }
+            //text = text + "tika-hack";
+            text = text + te1;
+            xhtml.characters(text);
         } catch (SAXException e) {
             throw new IOException(
-                    "Unable to write a character: " + text.getUnicode(), e);
+                    "Unable to write a string: " + text, e);
         }
     }
 
-    @Override
-    protected void writeWordSeparator() throws IOException {
-        try {
-            xhtml.characters(getWordSeparator());
-        } catch (SAXException e) {
-            throw new IOException(
-                    "Unable to write a space character", e);
+    /*
+        @Override
+        protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
+            // String t = "newline: " + s;
+            //System.out.println(textPositions);
+            StringBuilder te = new StringBuilder("newline: ");
+            StringBuilder te1 = new StringBuilder("");
+            float linePositiony = 0;
+            float linePositionx = 0;
+            te1.append("[");
+            for (TextPosition s : textPositions){
+                //System.out.println(text.getYDirAdj());
+                te1.append("{'char':(").append(s.getWidthDirAdj()).append(", ").append(s.getHeightDir()).append(" ),").append("'line':(").append(s.getXDirAdj()).append(", ").append(s.getYDirAdj()).append(")},");
+                linePositiony = s.getYDirAdj();
+                linePositionx = s.getXDirAdj();
+                te.append(text);
+            }
+            System.out.println(te1);
+            te1.append("] " + ", {'linepos': (").append(linePositionx).append(", ").append(linePositiony).append(")} ").append(te).append("\n");
+
         }
-    }
-
-    @Override
-    protected void writeLineSeparator() throws IOException {
-        try {
-            xhtml.newline();
-        } catch (SAXException e) {
-            throw new IOException(
-                    "Unable to write a newline character", e);
-        }
-    }
-
-    class AngleCollector extends PDFTextStripper {
-        Set<Integer> angles = new HashSet<>();
-
-        public Set<Integer> getAngles() {
-            return angles;
+    */
+        @Override
+        protected void writeCharacters(TextPosition text) throws IOException {
+            try {
+                xhtml.characters(text.getUnicode());
+            } catch (SAXException e) {
+                throw new IOException(
+                        "Unable to write a character: " + text.getUnicode(), e);
+            }
         }
 
-        /**
-         * Instantiate a new PDFTextStripper object.
-         *
-         * @throws IOException If there is an error loading the properties.
-         */
+        @Override
+        protected void writeWordSeparator() throws IOException {
+            try {
+                xhtml.characters(getWordSeparator());
+            } catch (SAXException e) {
+                throw new IOException(
+                        "Unable to write a space character", e);
+            }
+        }
+
+        @Override
+        protected void writeLineSeparator() throws IOException {
+            try {
+                xhtml.newline();
+            } catch (SAXException e) {
+                throw new IOException(
+                        "Unable to write a newline character", e);
+            }
+        }
+
+        class AngleCollector extends PDFTextStripper {
+            Set<Integer> angles = new HashSet<>();
+
+            public Set<Integer> getAngles() {
+                return angles;
+            }
+
+            /**
+             * Instantiate a new PDFTextStripper object.
+             *
+             * @throws IOException If there is an error loading the properties.
+             */
         AngleCollector() throws IOException {
         }
 

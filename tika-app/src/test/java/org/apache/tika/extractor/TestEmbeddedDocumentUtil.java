@@ -30,7 +30,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class TestEmbeddedDocumentUtil {
+class sTestEmbeddedDocumentUtil {
     //TODO -- figure out how to mock this into tika-core
 
     @Test
