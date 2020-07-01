@@ -170,7 +170,8 @@ class PDF2XHTML extends AbstractPDF2XHTML {
     protected void writeParagraphStart() throws IOException {
         super.writeParagraphStart();
         try {
-            xhtml.startElement("p");
+            System.out.println();
+            xhtml.startElement("div", "class", "p-block");
         } catch (SAXException e) {
             throw new IOException("Unable to start a paragraph", e);
         }
@@ -180,7 +181,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
     protected void writeParagraphEnd() throws IOException {
         super.writeParagraphEnd();
         try {
-            xhtml.endElement("p");
+            xhtml.endElement("div");
         } catch (SAXException e) {
             throw new IOException("Unable to end a paragraph", e);
         }
@@ -207,16 +208,23 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             float linePositiony = 0;
             float linePositionx = 0;
             te1.append("[");
+            String height="8";
             for (TextPosition s : textPositions){
                 //System.out.println(text.getYDirAdj());
+                //xhtml.startElement();
+                //xhtml.endElement();
+                height = "font-size:" + Float.toString(s.getHeightDir()*5) + "px;";
                 te1.append("{'char':(").append(s.getWidthDirAdj()).append(", ").append(s.getHeightDir()).append(" ),").append("'line':(").append(s.getXDirAdj()).append(", ").append(s.getYDirAdj()).append(")},");
                 linePositiony = s.getYDirAdj();
                 linePositionx = s.getXDirAdj();
                 te.append(s);
             }
             //text = text + "tika-hack";
-            text = text + te1;
+            //text = text + te1 + "]";
+            String val = height + ";border: 3px solid #f3AD21";
+            xhtml.startElement("p", "style", val);
             xhtml.characters(text);
+            xhtml.endElement("p");
         } catch (SAXException e) {
             throw new IOException(
                     "Unable to write a string: " + text, e);
