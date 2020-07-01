@@ -133,7 +133,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
     @Override
     protected void endPage(PDPage page) throws IOException {
         try {
-            writeParagraphEnd();
+            //writeParagraphEnd();
             try {
                 extractImages(page);
             } catch (IOException e) {
@@ -171,7 +171,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
         super.writeParagraphStart();
         try {
             System.out.println();
-            xhtml.startElement("div", "class", "p-block");
+            xhtml.startElement("div");
         } catch (SAXException e) {
             throw new IOException("Unable to start a paragraph", e);
         }
@@ -209,11 +209,17 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             float linePositionx = 0;
             te1.append("[");
             String height="8";
+            String y_rel = "";
+            //xhtml.startElement("div", "style", "border:3px solid ##ff0000;");
+            String s1 = Float.toString(textPositions.get(0).getXDirAdj());
+            String indent = "text-indent:" + s1  + "px;";
             for (TextPosition s : textPositions){
                 //System.out.println(text.getYDirAdj());
                 //xhtml.startElement();
                 //xhtml.endElement();
-                height = "font-size:" + Float.toString(s.getHeightDir()*5) + "px;";
+                //Math.pow(s.getHeightDir(),5);
+                height = "font-size:" + Float.toString((float) Math.pow(s.getHeightDir(),2)) + "px;";
+                y_rel = "top:" + Float.toString(s.getYDirAdj()) + "px;";
                 te1.append("{'char':(").append(s.getWidthDirAdj()).append(", ").append(s.getHeightDir()).append(" ),").append("'line':(").append(s.getXDirAdj()).append(", ").append(s.getYDirAdj()).append(")},");
                 linePositiony = s.getYDirAdj();
                 linePositionx = s.getXDirAdj();
@@ -221,10 +227,13 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             }
             //text = text + "tika-hack";
             //text = text + te1 + "]";
-            String val = height + ";border: 3px solid #f3AD21";
+            //String val = height + "border: 3px solid #f3AD21;"+y_rel;
+            //String val = height + y_rel + "position:absolute;" + indent;
+            String val = height + y_rel  + indent;
             xhtml.startElement("p", "style", val);
             xhtml.characters(text);
             xhtml.endElement("p");
+            //xhtml.endElement("div");
         } catch (SAXException e) {
             throw new IOException(
                     "Unable to write a string: " + text, e);

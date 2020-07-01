@@ -197,7 +197,7 @@ class AbstractPDF2XHTML extends PDFTextStripper {
         } catch (SAXException e) {
             throw new IOExceptionWithCause("Unable to start a page", e);
         }
-        writeParagraphStart();
+        //writeParagraphStart();
     }
 
     private void extractXMPXFA(PDDocument pdfDocument, Metadata parentMetadata, ParseContext context) throws IOException, SAXException {
