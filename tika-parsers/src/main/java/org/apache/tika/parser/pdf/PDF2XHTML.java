@@ -165,18 +165,24 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             throw first;
         }
     }
-
+/*
     @Override
     protected void writeParagraphStart() throws IOException {
         super.writeParagraphStart();
         try {
             System.out.println();
-            xhtml.startElement("div");
+            xhtml.startElement("div", "style", "position:relative;");
         } catch (SAXException e) {
             throw new IOException("Unable to start a paragraph", e);
         }
     }
-
+*/
+    @Override
+    protected void writeParagraphStart() throws IOException {
+        super.writeParagraphStart();
+        System.out.println();
+    }
+/*
     @Override
     protected void writeParagraphEnd() throws IOException {
         super.writeParagraphEnd();
@@ -186,6 +192,13 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             throw new IOException("Unable to end a paragraph", e);
         }
     }
+
+ */
+@Override
+protected void writeParagraphEnd() throws IOException {
+    super.writeParagraphEnd();
+    System.out.println();
+}
 /*
     @Override
     protected void writeString(String text) throws IOException {
@@ -211,14 +224,14 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             String height="8";
             String y_rel = "";
             //xhtml.startElement("div", "style", "border:3px solid ##ff0000;");
-            String s1 = Float.toString(textPositions.get(0).getXDirAdj());
+            String s1 = Float.toString(textPositions.get(0).getXDirAdj() * 1);
             String indent = "text-indent:" + s1  + "px;";
             for (TextPosition s : textPositions){
                 //System.out.println(text.getYDirAdj());
                 //xhtml.startElement();
                 //xhtml.endElement();
                 //Math.pow(s.getHeightDir(),5);
-                height = "font-size:" + Float.toString((float) Math.pow(s.getHeightDir(),2)) + "px;";
+                height = "font-size:" + Float.toString((float) Math.pow(s.getHeightDir(),1)) + "px;";
                 y_rel = "top:" + Float.toString(s.getYDirAdj()) + "px;";
                 te1.append("{'char':(").append(s.getWidthDirAdj()).append(", ").append(s.getHeightDir()).append(" ),").append("'line':(").append(s.getXDirAdj()).append(", ").append(s.getYDirAdj()).append(")},");
                 linePositiony = s.getYDirAdj();
@@ -228,8 +241,8 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             //text = text + "tika-hack";
             //text = text + te1 + "]";
             //String val = height + "border: 3px solid #f3AD21;"+y_rel;
-            //String val = height + y_rel + "position:absolute;" + indent;
-            String val = height + y_rel  + indent;
+            String val = height + y_rel + "position:absolute;" + indent;
+            //String val = height + y_rel  + indent;
             xhtml.startElement("p", "style", val);
             xhtml.characters(text);
             xhtml.endElement("p");

@@ -24,8 +24,8 @@ import static org.junit.Assert.assertNotNull;
 public class TestMe {
     @Test
     public void testSimple() throws IOException {
-        File file = new File("/Users/reshavabraham/work/data/morgan_stanley_data/res23.pdf");
-        //File file = new File("/Users/reshavabraham/work/data/test.pdf");
+        //File file = new File("/Users/reshavabraham/work/data/morgan_stanley_data/res23.pdf");
+        File file = new File("/Users/reshavabraham/work/data/test.pdf");
         byte[] bytes = Files.toByteArray(file);
         AutoDetectParser tikaParser = new AutoDetectParser();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
