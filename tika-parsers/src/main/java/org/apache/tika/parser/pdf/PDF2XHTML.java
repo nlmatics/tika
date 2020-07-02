@@ -213,6 +213,7 @@ protected void writeParagraphEnd() throws IOException {
     }
 
  */
+
     @Override
     protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
         try {
