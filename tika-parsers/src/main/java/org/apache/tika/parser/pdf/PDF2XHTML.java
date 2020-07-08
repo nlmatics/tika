@@ -86,7 +86,6 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             // Extract text using a dummy Writer as we override the
             // key methods to output to the given content
             // handler.
-            System.out.println("hereiam");
             if (config.getDetectAngles()) {
                 pdf2XHTML = new AngleDetectingPDF2XHTML(document, handler, context, metadata, config);
             } else {
@@ -224,6 +223,7 @@ protected void writeParagraphEnd() throws IOException {
             te1.append("[");
             String height="8";
             String y_rel = "";
+            String y_bot = "";
             //xhtml.startElement("div", "style", "border:3px solid ##ff0000;");
             String s1 = Float.toString(textPositions.get(0).getXDirAdj() * 1);
             String indent = "text-indent:" + s1  + "px;";

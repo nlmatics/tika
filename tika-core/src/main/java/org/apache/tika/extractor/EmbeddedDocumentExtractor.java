@@ -37,7 +37,9 @@ public interface EmbeddedDocumentExtractor {
      * @throws org.xml.sax.SAXException
      * @throws java.io.IOException
      */
+
     void parseEmbedded(
             InputStream stream, ContentHandler handler, Metadata metadata, boolean outputHtml)
             throws SAXException, IOException;
+
 }

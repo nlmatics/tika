@@ -201,6 +201,7 @@ class AbstractPDF2XHTML extends PDFTextStripper {
         //writeParagraphStart();
     }
 
+
     private void extractXMPXFA(PDDocument pdfDocument, Metadata parentMetadata, ParseContext context) throws IOException, SAXException {
         Set<MediaType> supportedTypes = Collections.EMPTY_SET;
         Parser embeddedParser = context.get(Parser.class);
