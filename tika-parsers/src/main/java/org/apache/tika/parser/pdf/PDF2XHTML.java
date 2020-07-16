@@ -209,13 +209,14 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             te1.append("[");
             for (TextPosition s : textPositions){
                 //System.out.println(text.getYDirAdj());
-                te1.append("{'char':(").append(s.getWidthDirAdj()).append(", ").append(s.getHeightDir()).append(" ),").append("'line':(").append(s.getXDirAdj()).append(", ").append(s.getYDirAdj()).append(")},");
+                te1.append("{'char':'").append(s).append("', ").append("'char-size':(").append(s.getWidthDirAdj()).append(", ").append(s.getHeightDir()).append(" ),").append("'line-xy':(").append(s.getXDirAdj()).append(", ").append(s.getYDirAdj()).append(")},");
                 linePositiony = s.getYDirAdj();
                 linePositionx = s.getXDirAdj();
                 te.append(s);
             }
             //text = text + "tika-hack";
-            text = text + te1;
+            te1.append("]");
+            text = "('" + text + "', " + te1 + ")";
             xhtml.characters(text);
         } catch (SAXException e) {
             throw new IOException(

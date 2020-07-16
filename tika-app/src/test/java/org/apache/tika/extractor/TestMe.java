@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 public class TestMe {
     @Test
     public void testSimple() throws IOException {
-        File file = new File("ENTER FILE HERE");
+        File file = new File("/Users/reshavabraham/scp/original-docs/scp1/190108 BPH DevBudget Cash-Flow Draft.pdf");
         byte[] bytes = Files.toByteArray(file);
         AutoDetectParser tikaParser = new AutoDetectParser();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -46,7 +46,7 @@ public class TestMe {
             throw new IOException(ex);
         }
         try {
-            FileWriter myWriter = new FileWriter("OUTPUT FILE HERE");
+            FileWriter myWriter = new FileWriter("/Users/reshavabraham/scp/charmap/190108.html");
             myWriter.write(out.toString());
             myWriter.close();
             System.out.println("Successfully wrote to the file.");
