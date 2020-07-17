@@ -16,21 +16,13 @@
  */
 package org.apache.tika.parser.pdf;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSStream;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFontDescriptor;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 import org.apache.pdfbox.util.Matrix;
@@ -39,6 +31,11 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Utility class that overrides the {@link PDFTextStripper} functionality
@@ -55,14 +52,15 @@ class PDF2XHTML extends AbstractPDF2XHTML {
      * is true, this will be checked before extracting an embedded image.
      * The integer keeps track of the inlineImageCounter for that image.
      * This integer is used to identify images in the markup.
-     *
+     * <p>
      * This is used across the document.  To avoid infinite recursion
      * TIKA-1742, we're limiting the export to one image per page.
      */
     private Map<COSStream, Integer> processedInlineImages = new HashMap<>();
     private AtomicInteger inlineImageCounter = new AtomicInteger(0);
+
     PDF2XHTML(PDDocument document, ContentHandler handler, ParseContext context, Metadata metadata,
-                      PDFParserConfig config)
+              PDFParserConfig config)
             throws IOException {
         super(document, handler, context, metadata, config);
     }
@@ -164,40 +162,42 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             throw first;
         }
     }
-/*
-    @Override
-    protected void writeParagraphStart() throws IOException {
-        super.writeParagraphStart();
-        try {
-            System.out.println();
-            xhtml.startElement("div", "style", "position:relative;");
-        } catch (SAXException e) {
-            throw new IOException("Unable to start a paragraph", e);
+
+    /*
+        @Override
+        protected void writeParagraphStart() throws IOException {
+            super.writeParagraphStart();
+            try {
+                System.out.println();
+                xhtml.startElement("div", "style", "position:relative;");
+            } catch (SAXException e) {
+                throw new IOException("Unable to start a paragraph", e);
+            }
         }
-    }
-*/
+    */
     @Override
     protected void writeParagraphStart() throws IOException {
         super.writeParagraphStart();
         System.out.println();
     }
-/*
+
+    /*
+        @Override
+        protected void writeParagraphEnd() throws IOException {
+            super.writeParagraphEnd();
+            try {
+                xhtml.endElement("div");
+            } catch (SAXException e) {
+                throw new IOException("Unable to end a paragraph", e);
+            }
+        }
+
+     */
     @Override
     protected void writeParagraphEnd() throws IOException {
         super.writeParagraphEnd();
-        try {
-            xhtml.endElement("div");
-        } catch (SAXException e) {
-            throw new IOException("Unable to end a paragraph", e);
-        }
+        System.out.println();
     }
-
- */
-@Override
-protected void writeParagraphEnd() throws IOException {
-    super.writeParagraphEnd();
-    System.out.println();
-}
 /*
     @Override
     protected void writeString(String text) throws IOException {
@@ -221,28 +221,59 @@ protected void writeParagraphEnd() throws IOException {
             float linePositiony = 0;
             float linePositionx = 0;
             te1.append("[");
-            String height="8";
+            String height = "8";
             String y_rel = "";
             String y_bot = "";
+            String font_type = "";
+            String font_weight = "normal";
+            String font_style = "normal";
             //xhtml.startElement("div", "style", "border:3px solid ##ff0000;");
             String s1 = Float.toString(textPositions.get(0).getXDirAdj() * 1);
-            String indent = "text-indent:" + s1  + "px;";
-            for (TextPosition s : textPositions){
+            String indent = "text-indent:" + s1 + "px;";
+            for (TextPosition s : textPositions) {
                 //System.out.println(text.getYDirAdj());
                 //xhtml.startElement();
                 //xhtml.endElement();
                 //Math.pow(s.getHeightDir(),5);
-                height = "font-size:" + Float.toString((float) Math.pow(s.getHeightDir(),1)) + "px;";
+                height = "font-size:" + Float.toString((float) Math.pow(s.getHeightDir(), 1)) + "px;";
                 y_rel = "top:" + Float.toString(s.getYDirAdj()) + "px;";
                 te1.append("{'char':(").append(s.getWidthDirAdj()).append(", ").append(s.getHeightDir()).append(" ),").append("'line':(").append(s.getXDirAdj()).append(", ").append(s.getYDirAdj()).append(")},");
                 linePositiony = s.getYDirAdj();
                 linePositionx = s.getXDirAdj();
+                PDFontDescriptor fd = s.getFont().getFontDescriptor();
+                font_type = fd.getFontFamily();
+                if (font_type == null) {
+                    font_type = fd.getFontName();
+
+                    if (font_type.contains("+")) {
+                        font_type = font_type.split("\\+")[1];
+                    }
+
+                    if (font_type.contains(",")) {
+                        String[] arr = font_type.split(",");
+                        if (arr[1].toLowerCase().contains("bold")) {
+                            font_weight = "bold";
+                        }
+                        font_type = arr[0];
+                    }
+                }
+                float fw = fd.getFontWeight();
+                if (font_weight.equals("normal") && fw >= 100) {
+                    font_weight = Float.toString(fw);
+                }
+                if (fd.getItalicAngle() != 0) {
+                    font_style = "italic";
+                }
                 te.append(s);
             }
+            font_weight = "font-weight:" + font_weight + ";";
+            font_style = "font-style:" + font_style + ";";
+            font_type = "font-family:" + font_type + ";";
+
             //text = text + "tika-hack";
             //text = text + te1 + "]";
             //String val = height + "border: 3px solid #f3AD21;"+y_rel;
-            String val = height + y_rel + "position:absolute;" + indent;
+            String val = height + font_type + font_style + font_weight + y_rel + "position:absolute;" + indent;
             //String val = height + y_rel  + indent;
             xhtml.startElement("p", "style", val);
             xhtml.characters(text);
@@ -276,48 +307,48 @@ protected void writeParagraphEnd() throws IOException {
 
         }
     */
-        @Override
-        protected void writeCharacters(TextPosition text) throws IOException {
-            try {
-                xhtml.characters(text.getUnicode());
-            } catch (SAXException e) {
-                throw new IOException(
-                        "Unable to write a character: " + text.getUnicode(), e);
-            }
+    @Override
+    protected void writeCharacters(TextPosition text) throws IOException {
+        try {
+            xhtml.characters(text.getUnicode());
+        } catch (SAXException e) {
+            throw new IOException(
+                    "Unable to write a character: " + text.getUnicode(), e);
+        }
+    }
+
+    @Override
+    protected void writeWordSeparator() throws IOException {
+        try {
+            xhtml.characters(getWordSeparator());
+        } catch (SAXException e) {
+            throw new IOException(
+                    "Unable to write a space character", e);
+        }
+    }
+
+    @Override
+    protected void writeLineSeparator() throws IOException {
+        try {
+            xhtml.newline();
+        } catch (SAXException e) {
+            throw new IOException(
+                    "Unable to write a newline character", e);
+        }
+    }
+
+    class AngleCollector extends PDFTextStripper {
+        Set<Integer> angles = new HashSet<>();
+
+        public Set<Integer> getAngles() {
+            return angles;
         }
 
-        @Override
-        protected void writeWordSeparator() throws IOException {
-            try {
-                xhtml.characters(getWordSeparator());
-            } catch (SAXException e) {
-                throw new IOException(
-                        "Unable to write a space character", e);
-            }
-        }
-
-        @Override
-        protected void writeLineSeparator() throws IOException {
-            try {
-                xhtml.newline();
-            } catch (SAXException e) {
-                throw new IOException(
-                        "Unable to write a newline character", e);
-            }
-        }
-
-        class AngleCollector extends PDFTextStripper {
-            Set<Integer> angles = new HashSet<>();
-
-            public Set<Integer> getAngles() {
-                return angles;
-            }
-
-            /**
-             * Instantiate a new PDFTextStripper object.
-             *
-             * @throws IOException If there is an error loading the properties.
-             */
+        /**
+         * Instantiate a new PDFTextStripper object.
+         *
+         * @throws IOException If there is an error loading the properties.
+         */
         AngleCollector() throws IOException {
         }
 
