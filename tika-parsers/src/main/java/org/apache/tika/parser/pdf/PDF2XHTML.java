@@ -216,7 +216,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             }
             //text = text + "tika-hack";
             te1.append("]");
-            text = "('" + text + "', " + te1 + ")";
+            text = "('" + text + "', " + te1 + "), ";
             xhtml.characters(text);
         } catch (SAXException e) {
             throw new IOException(
