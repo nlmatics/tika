@@ -90,7 +90,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
                 pdf2XHTML = new PDF2XHTML(document, handler, context, metadata, config);
             }
             config.configure(pdf2XHTML);
-
+            pdf2XHTML.setSortByPosition(true);
             pdf2XHTML.writeText(document, new Writer() {
                 @Override
                 public void write(char[] cbuf, int off, int len) {
@@ -227,6 +227,8 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             String font_type = "";
             String font_weight = "normal";
             String font_style = "normal";
+            String font_last_char_pos = "0.0";
+            float last_char_pos = 0;
             //xhtml.startElement("div", "style", "border:3px solid ##ff0000;");
             String s1 = Float.toString(textPositions.get(0).getXDirAdj() * 1);
             String indent = "text-indent:" + s1 + "px;";
@@ -265,15 +267,16 @@ class PDF2XHTML extends AbstractPDF2XHTML {
                     font_style = "italic";
                 }
                 te.append(s);
+                last_char_pos = s.getXDirAdj();
             }
             font_weight = "font-weight:" + font_weight + ";";
             font_style = "font-style:" + font_style + ";";
             font_type = "font-family:" + font_type + ";";
-
+            font_last_char_pos = "last-char:" + last_char_pos + "px;";
             //text = text + "tika-hack";
             //text = text + te1 + "]";
             //String val = height + "border: 3px solid #f3AD21;"+y_rel;
-            String val = height + font_type + font_style + font_weight + y_rel + "position:absolute;" + indent;
+            String val = height + font_type + font_style + font_weight + y_rel + "position:absolute;" + indent + font_last_char_pos;
             //String val = height + y_rel  + indent;
             xhtml.startElement("p", "style", val);
             xhtml.characters(text);
