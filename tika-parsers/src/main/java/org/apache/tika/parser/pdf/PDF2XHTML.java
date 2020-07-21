@@ -90,7 +90,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
                 pdf2XHTML = new PDF2XHTML(document, handler, context, metadata, config);
             }
             config.configure(pdf2XHTML);
-            pdf2XHTML.setSortByPosition(true);
+            //pdf2XHTML.setSortByPosition(true);
             pdf2XHTML.writeText(document, new Writer() {
                 @Override
                 public void write(char[] cbuf, int off, int len) {

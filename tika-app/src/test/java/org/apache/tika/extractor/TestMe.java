@@ -31,7 +31,10 @@ public class TestMe {
         //File file = new File("/Users/reshavabraham/scp/original-docs/scp2/111 Washington Executive Summary.v.6.1.18.pdf");
         //File file = new File("/Users/reshavabraham/scp/original-docs/scp4/The Godfrey Hotel Phoenix - Oxford Capital Group +True North - Debt OM.pdf");
         //File file = new File("/Users/reshavabraham/scp/original-docs/scp1/190108 BPH DevBudget Cash-Flow Draft.pdf");
-        File file = new File("/Users/reshavabraham/scp/original-docs/scp1/Westlake CIM November2018 WMP.pdf");
+        //File file = new File("/Users/reshavabraham/data/amazon/amazon_data/amazon-8k-052920.pdf");
+        //File file = new File("/Users/reshavabraham/scp/original-docs/scp1/Westlake CIM November2018 WMP.pdf");
+        //File file = new File("/Users/reshavabraham/scp/original-docs/scp2/143-157 Roebling & 11-19 Hope Street - JLL Financing OM (low res).pdf");
+        File file = new File("/Users/reshavabraham/scp/original-docs/scp1/The Laurel (1911 Walnut)_OM_Final_LR.pdf");
         byte[] bytes = Files.toByteArray(file);
         AutoDetectParser tikaParser = new AutoDetectParser();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -53,7 +56,7 @@ public class TestMe {
             throw new IOException(ex);
         }
         try {
-            FileWriter myWriter = new FileWriter("/Users/reshavabraham/work/nlm-tika/test-out.html");
+            FileWriter myWriter = new FileWriter("/Users/reshavabraham/work/nlm-tika/test-out2.html");
             myWriter.write(out.toString());
             myWriter.close();
             System.out.println("Successfully wrote to the file.");
