@@ -44,20 +44,15 @@ import org.apache.tika.exception.TikaMemoryLimitException;
 import org.apache.tika.exception.ZeroByteFileException;
 import org.apache.tika.extractor.EmbeddedDocumentExtractor;
 import org.apache.tika.extractor.EmbeddedDocumentUtil;
-import org.apache.tika.extractor.ParsingEmbeddedDocumentExtractor;
 import org.apache.tika.io.BoundedInputStream;
 import org.apache.tika.io.IOExceptionWithCause;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
-import org.apache.tika.parser.EmptyParser;
 import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.Parser;
-import org.apache.tika.parser.RecursiveParserWrapper;
 import org.apache.tika.sax.EmbeddedContentHandler;
 import org.apache.tika.sax.XHTMLContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
 
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -78,7 +73,7 @@ class ImageGraphicsEngine extends PDFGraphicsStreamEngine {
 
     //We're currently copying images to byte[].  We should
     //limit the length to avoid OOM on crafted files.
-    private static final long MAX_IMAGE_LENGTH_BYTES = 100*1024*1024;
+    private static final long MAX_IMAGE_LENGTH_BYTES = 100 * 1024 * 1024;
 
     private static final List<String> JPEG = Arrays.asList(
             COSName.DCT_DECODE.getName(),
@@ -180,7 +175,7 @@ class ImageGraphicsEngine extends PDFGraphicsStreamEngine {
         //duplicates if the pdImage is not a PDImageXObject?
         try {
             processImage(pdImage, imageNumber);
-        } catch (TikaException|SAXException e) {
+        } catch (TikaException | SAXException e) {
             throw new IOExceptionWithCause(e);
         } catch (IOException e) {
             handleCatchableIOE(e);
@@ -284,13 +279,13 @@ class ImageGraphicsEngine extends PDFGraphicsStreamEngine {
         String suffix = getSuffix(pdImage, metadata);
         String fileName = "image" + imageNumber + "." + suffix;
 
-
+        /*
         AttributesImpl attr = new AttributesImpl();
         attr.addAttribute("", "src", "src", "CDATA", "embedded:" + fileName);
         attr.addAttribute("", "alt", "alt", "CDATA", fileName);
         xhtml.startElement("img", attr);
         xhtml.endElement("img");
-
+        */
 
         metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, fileName);
         metadata.set(TikaCoreProperties.EMBEDDED_RESOURCE_TYPE,
@@ -310,7 +305,7 @@ class ImageGraphicsEngine extends PDFGraphicsStreamEngine {
             //extract the metadata contained outside of the image
             try {
                 writeToBuffer(pdImage, suffix, useDirectJPEG, buffer);
-            }  catch (MissingImageReaderException e) {
+            } catch (MissingImageReaderException e) {
                 EmbeddedDocumentUtil.recordException(e, parentMetadata);
                 return;
             } catch (IOException e) {
@@ -493,6 +488,7 @@ class ImageGraphicsEngine extends PDFGraphicsStreamEngine {
         }
 
     }
+
     private static boolean hasMasks(PDImage pdImage) throws IOException {
         if (pdImage instanceof PDImageXObject) {
             PDImageXObject ximg = (PDImageXObject) pdImage;

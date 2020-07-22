@@ -285,8 +285,8 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             font_style = "font-style:" + font_style + ";";
             font_type = "font-family:" + font_type + ";";
             word_start_pos = "word-start-positions:" + wordsStartPos.toString();
-            System.out.println(text);
-            System.out.println(testWordStartPos.toString());
+            //System.out.println(text);
+            //System.out.println(testWordStartPos.toString());
             //text = text + "tika-hack";
             //text = text + te1 + "]";
             //String val = height + "border: 3px solid #f3AD21;"+y_rel;
