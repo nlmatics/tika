@@ -133,7 +133,7 @@ public class TestMe {
                     throw new IOException(ex);
                 }
                 try {
-                    FileWriter myWriter = new FileWriter("/Users/reshavabraham/scp/tika-modded-067/scp4/" + listOfFile.getName() + ".html");
+                    FileWriter myWriter = new FileWriter("/Users/reshavabraham/scp/tika-modded-721/scp4/" + listOfFile.getName() + ".html");
                     myWriter.write(out.toString());
                     myWriter.close();
                     System.out.println("Successfully wrote to the file.");
