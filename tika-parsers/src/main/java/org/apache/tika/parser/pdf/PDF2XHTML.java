@@ -238,6 +238,8 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             String s1 = Float.toString(textPositions.get(0).getXDirAdj() * 1);
             String indent = "text-indent:" + s1 + "px;";
             String prev = " ";
+            String height1 = "start-font-size:" + Float.toString((float) Math.pow(textPositions.get(0).getHeightDir(), 1)) + "px;";
+            String top1 = "top1:" + Float.toString(textPositions.get(0).getYDirAdj()) + "px;";
             for (TextPosition s : textPositions) {
                 //System.out.println(text.getYDirAdj());
                 //xhtml.startElement();
@@ -289,7 +291,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             //text = text + "tika-hack";
             //text = text + te1 + "]";
             //String val = height + "border: 3px solid #f3AD21;"+y_rel;
-            String val = height + font_type + font_style + font_weight + y_rel + "position:absolute;" +
+            String val = top1+ height1 + height + font_type + font_style + font_weight + y_rel + "position:absolute;" +
                     indent + word_start_pos;
             //String val = height + y_rel  + indent;
             xhtml.startElement("p", "style", val);
