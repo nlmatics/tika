@@ -226,6 +226,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
 
             float linePositiony = 0;
             float linePositionx = 0;
+            String last_char_pos = "";
             te1.append("[");
             String height = "8";
             String y_rel = "";
@@ -245,6 +246,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
                 //xhtml.startElement();
                 //xhtml.endElement();
                 //Math.pow(s.getHeightDir(),5);
+                System.out.println(textPositions.getClass());
                 height = "font-size:" + Float.toString((float) Math.pow(s.getHeightDir(), 1)) + "px;";
                 y_rel = "top:" + Float.toString(s.getYDirAdj()) + "px;";
                 te1.append("{'char':(").append(s.getWidthDirAdj()).append(", ").append(s.getHeightDir()).append(" ),").append("'line':(").append(s.getXDirAdj()).append(", ").append(s.getYDirAdj()).append(")},");
@@ -281,6 +283,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
                 if (fd.getItalicAngle() != 0) {
                     font_style = "italic";
                 }
+                last_char_pos = "(" + Float.toString(s.getX()) + ", " + Float.toString(s.getY()) + ")";
                 te.append(s);
             }
             font_weight = "font-weight:" + font_weight + ";";
@@ -292,7 +295,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             //text = text + te1 + "]";
             //String val = height + "border: 3px solid #f3AD21;"+y_rel;
             String val = top1+ height1 + height + font_type + font_style + font_weight + y_rel + "position:absolute;" +
-                    indent + word_start_pos;
+                    indent + word_start_pos + ";last-char:" + last_char_pos;
             //String val = height + y_rel  + indent;
             xhtml.startElement("p", "style", val);
             xhtml.characters(text);
