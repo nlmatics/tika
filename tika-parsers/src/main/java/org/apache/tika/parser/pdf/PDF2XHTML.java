@@ -221,12 +221,15 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             StringBuilder te1 = new StringBuilder();
             StringBuilder testWordStartPos = new StringBuilder();
             ArrayList<String> wordsStartPos = new ArrayList<>(20);
+            ArrayList<String> wordsEndPos = new ArrayList<>(20);
+            ArrayList<String> wordSpaceDistanceList = new ArrayList<>(20);
             // int wordCount = text.split("\\s+").length;
             // String[] wordsStartPos2 = new String[wordCount];
 
             float linePositiony = 0;
             float linePositionx = 0;
-            String last_char_pos = "";
+            String last_char_pos = "[]";
+            String last_char_pos_tmp = "";
             te1.append("[");
             String height = "8";
             String y_rel = "";
@@ -241,12 +244,14 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             String prev = " ";
             String height1 = "start-font-size:" + Float.toString((float) Math.pow(textPositions.get(0).getHeightDir(), 1)) + "px;";
             String top1 = "top1:" + Float.toString(textPositions.get(0).getYDirAdj()) + "px;";
-            for (TextPosition s : textPositions) {
+            //for (TextPosition s : textPositions) {
+            for (int i = 0; i < textPositions.size(); i ++) {
                 //System.out.println(text.getYDirAdj());
                 //xhtml.startElement();
                 //xhtml.endElement();
                 //Math.pow(s.getHeightDir(),5);
-                System.out.println(textPositions.getClass());
+                TextPosition s = textPositions.get(i);
+                //System.out.println(textPositions.getClass());
                 height = "font-size:" + Float.toString((float) Math.pow(s.getHeightDir(), 1)) + "px;";
                 y_rel = "top:" + Float.toString(s.getYDirAdj()) + "px;";
                 te1.append("{'char':(").append(s.getWidthDirAdj()).append(", ").append(s.getHeightDir()).append(" ),").append("'line':(").append(s.getXDirAdj()).append(", ").append(s.getYDirAdj()).append(")},");
@@ -257,6 +262,12 @@ class PDF2XHTML extends AbstractPDF2XHTML {
                     String tempWordPos = "(" + linePositionx + "," + linePositiony + ")";
                     testWordStartPos.append("(").append(linePositionx).append(",").append(linePositiony).append(")").append("current char: ").append(s.toString());
                     wordsStartPos.add(tempWordPos);
+                }
+                if (i+1 < textPositions.size()) {
+                    if (textPositions.get(i+1).toString().equals(" ")) {
+                        // if next char is a space save get the position of the last char of the word
+                        wordsEndPos.add("(" + linePositionx + ", " + linePositiony + ")");
+                    }
                 }
                 prev = s.toString();
                 PDFontDescriptor fd = s.getFont().getFontDescriptor();
@@ -283,19 +294,20 @@ class PDF2XHTML extends AbstractPDF2XHTML {
                 if (fd.getItalicAngle() != 0) {
                     font_style = "italic";
                 }
-                last_char_pos = "(" + Float.toString(s.getX()) + ", " + Float.toString(s.getY()) + ")";
+                last_char_pos = "(" + Float.toString(linePositionx) + ", " + Float.toString(linePositiony) + ")";
                 te.append(s);
             }
             font_weight = "font-weight:" + font_weight + ";";
             font_style = "font-style:" + font_style + ";";
             font_type = "font-family:" + font_type + ";";
             word_start_pos = "word-start-positions:" + wordsStartPos.toString();
+            String word_end_pos = ";word-end-positions:" + wordsEndPos.toString();
             // System.out.println(testWordStartPos.toString());
             //text = text + "tika-hack";
             //text = text + te1 + "]";
             //String val = height + "border: 3px solid #f3AD21;"+y_rel;
             String val = top1+ height1 + height + font_type + font_style + font_weight + y_rel + "position:absolute;" +
-                    indent + word_start_pos + ";last-char:" + last_char_pos;
+                    indent + word_start_pos + ";last-char:" + last_char_pos + word_end_pos;
             //String val = height + y_rel  + indent;
             xhtml.startElement("p", "style", val);
             xhtml.characters(text);
