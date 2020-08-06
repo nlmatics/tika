@@ -261,7 +261,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
                 if (prev.equals(" ")) {
                     String tempWordPos = "(" + linePositionx + "," + linePositiony + ")";
                     testWordStartPos.append("(").append(linePositionx).append(",").append(linePositiony).append(")").append("current char: ").append(s.toString());
-                    wordsStartPos.add(tempWordPos);
+                    wordsStartPos.add(testWordStartPos.toString());
                 }
                 if (i+1 < textPositions.size()) {
                     if (textPositions.get(i+1).toString().equals(" ")) {

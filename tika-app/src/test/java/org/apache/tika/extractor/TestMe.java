@@ -31,7 +31,8 @@ public class TestMe {
         //File file = new File("/Users/reshavabraham/scp/original-docs/scp2/111 Washington Executive Summary.v.6.1.18.pdf");
         //File file = new File("/Users/reshavabraham/scp/original-docs/scp4/The Godfrey Hotel Phoenix - Oxford Capital Group +True North - Debt OM.pdf");
         //File file = new File("/Users/reshavabraham/scp/original-docs/scp1/190108 BPH DevBudget Cash-Flow Draft.pdf");
-        File file = new File("/Users/reshavabraham/work/data/ingestor_tests.pdf");
+        //File file = new File("/Users/reshavabraham/work/data/ingestor_tests.pdf");
+        File file = new File("/Users/reshavabraham/scp/tika-modded-8320/header_tests/215 West.pdf");
         byte[] bytes = Files.toByteArray(file);
         AutoDetectParser tikaParser = new AutoDetectParser();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -53,7 +54,7 @@ public class TestMe {
             throw new IOException(ex);
         }
         try {
-            FileWriter myWriter = new FileWriter("/Users/reshavabraham/work/nlm-tika/test-out.html");
+            FileWriter myWriter = new FileWriter("/Users/reshavabraham/scp/tika-modded-8320/test-out.html");
             myWriter.write(out.toString());
             myWriter.close();
             System.out.println("Successfully wrote to the file.");
