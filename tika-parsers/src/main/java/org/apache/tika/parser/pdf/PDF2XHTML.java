@@ -217,8 +217,6 @@ class PDF2XHTML extends AbstractPDF2XHTML {
     @Override
     protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
         try {
-            StringBuilder te = new StringBuilder("newline: ");
-            StringBuilder te1 = new StringBuilder();
             StringBuilder testWordStartPos = new StringBuilder();
             ArrayList<String> wordsStartPos = new ArrayList<>(20);
             ArrayList<String> wordsEndPos = new ArrayList<>(20);
@@ -229,11 +227,8 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             float linePositiony = 0;
             float linePositionx = 0;
             String last_char_pos = "[]";
-            String last_char_pos_tmp = "";
-            te1.append("[");
             String height = "8";
             String y_rel = "";
-            String y_bot = "";
             String font_type = "";
             String font_weight = "normal";
             String font_style = "normal";
@@ -244,32 +239,17 @@ class PDF2XHTML extends AbstractPDF2XHTML {
             String prev = " ";
             String height1 = "start-font-size:" + Float.toString((float) Math.pow(textPositions.get(0).getHeightDir(), 1)) + "px;";
             String top1 = "top1:" + Float.toString(textPositions.get(0).getYDirAdj()) + "px;";
+            String font_size = "";
             //for (TextPosition s : textPositions) {
             for (int i = 0; i < textPositions.size(); i ++) {
-                //System.out.println(text.getYDirAdj());
-                //xhtml.startElement();
-                //xhtml.endElement();
-                //Math.pow(s.getHeightDir(),5);
                 TextPosition s = textPositions.get(i);
-                //System.out.println(textPositions.getClass());
+                font_size = Float.toString((float) Math.pow(s.getHeightDir(), 1));
                 height = "font-size:" + Float.toString((float) Math.pow(s.getHeightDir(), 1)) + "px;";
                 y_rel = "top:" + Float.toString(s.getYDirAdj()) + "px;";
-                te1.append("{'char':(").append(s.getWidthDirAdj()).append(", ").append(s.getHeightDir()).append(" ),").append("'line':(").append(s.getXDirAdj()).append(", ").append(s.getYDirAdj()).append(")},");
                 linePositiony = s.getYDirAdj();
                 linePositionx = s.getXDirAdj();
-                // get start of word in format (xCoord, yCoord)
-                if (prev.equals(" ")) {
-                    String tempWordPos = "(" + linePositionx + "," + linePositiony + ")";
-                    testWordStartPos.append("(").append(linePositionx).append(",").append(linePositiony).append(")").append("current char: ").append(s.toString());
-                    wordsStartPos.add(testWordStartPos.toString());
-                }
-                if (i+1 < textPositions.size()) {
-                    if (textPositions.get(i+1).toString().equals(" ")) {
-                        // if next char is a space save get the position of the last char of the word
-                        wordsEndPos.add("(" + linePositionx + ", " + linePositiony + ")");
-                    }
-                }
-                prev = s.toString();
+
+
                 PDFontDescriptor fd = s.getFont().getFontDescriptor();
                 font_type = fd.getFontFamily();
                 if (font_type == null) {
@@ -287,6 +267,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
                         font_type = arr[0];
                     }
                 }
+
                 float fw = fd.getFontWeight();
                 if (font_weight.equals("normal") && fw >= 100) {
                     font_weight = Float.toString(fw);
@@ -294,19 +275,35 @@ class PDF2XHTML extends AbstractPDF2XHTML {
                 if (fd.getItalicAngle() != 0) {
                     font_style = "italic";
                 }
+
+                if (i+1 < textPositions.size()) {
+                    if (textPositions.get(i+1).toString().equals(" ")) {
+                        // if next char is a space save get the position of the last char of the word
+                        wordsEndPos.add("(" + linePositionx + "," + linePositiony + "," + font_size + "," +font_weight + ")");
+                    }
+                } else {
+                    // last char
+                    wordsEndPos.add("(" + linePositionx + "," + linePositiony + "," + font_size + "," +font_weight + ")");
+                }
+
+                // get start of word in format (xCoord, yCoord)
+                if (prev.equals(" ")) {
+                    //String tempWordPos = "(" + linePositionx + "," + linePositiony + ")";
+                    String tempWordPos = "(" + linePositionx + "," + linePositiony + "," + font_size + "," +font_weight + ")";
+                    testWordStartPos.append("(").append(linePositionx).append(",").append(linePositiony).append(")").append("current char: ").append(s.toString());
+                    wordsStartPos.add(tempWordPos.toString());
+                }
+
+                prev = s.toString();
                 last_char_pos = "(" + Float.toString(linePositionx) + ", " + Float.toString(linePositiony) + ")";
-                te.append(s);
             }
             font_weight = "font-weight:" + font_weight + ";";
             font_style = "font-style:" + font_style + ";";
             font_type = "font-family:" + font_type + ";";
             word_start_pos = "word-start-positions:" + wordsStartPos.toString();
             String word_end_pos = ";word-end-positions:" + wordsEndPos.toString();
-            // System.out.println(testWordStartPos.toString());
-            //text = text + "tika-hack";
-            //text = text + te1 + "]";
-            //String val = height + "border: 3px solid #f3AD21;"+y_rel;
-            String val = top1+ height1 + height + font_type + font_style + font_weight + y_rel + "position:absolute;" +
+
+            String val = top1 + height1 + height + font_type + font_style + font_weight + y_rel + "position:absolute;" +
                     indent + word_start_pos + ";last-char:" + last_char_pos + word_end_pos;
             //String val = height + y_rel  + indent;
             xhtml.startElement("p", "style", val);
@@ -319,28 +316,6 @@ class PDF2XHTML extends AbstractPDF2XHTML {
         }
     }
 
-    /*
-        @Override
-        protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
-            // String t = "newline: " + s;
-            //System.out.println(textPositions);
-            StringBuilder te = new StringBuilder("newline: ");
-            StringBuilder te1 = new StringBuilder("");
-            float linePositiony = 0;
-            float linePositionx = 0;
-            te1.append("[");
-            for (TextPosition s : textPositions) {
-                //System.out.println(text.getYDirAdj());
-                te1.append("{'char':(").append(s.getWidthDirAdj()).append(", ").append(s.getHeightDir()).append(" ),").append("'line':(").append(s.getXDirAdj()).append(", ").append(s.getYDirAdj()).append(")},");
-                linePositiony = s.getYDirAdj();
-                linePositionx = s.getXDirAdj();
-                te.append(text);
-            }
-            System.out.println(te1);
-            te1.append("] " + ", {'linepos': (").append(linePositionx).append(", ").append(linePositiony).append(")} ").append(te).append("\n");
-
-        }
-    */
     @Override
     protected void writeCharacters(TextPosition text) throws IOException {
         try {
