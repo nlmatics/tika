@@ -35,6 +35,7 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -261,7 +262,7 @@ class PDF2XHTML extends AbstractPDF2XHTML {
 
                     if (font_type.contains(",")) {
                         String[] arr = font_type.split(",");
-                        if (arr[1].toLowerCase().contains("bold")) {
+                        if (arr[1].toLowerCase(Locale.ROOT).contains("bold")) {
                             font_weight = "bold";
                         }
                         font_type = arr[0];

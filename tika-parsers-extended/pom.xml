@@ -54,7 +54,7 @@
     <modules>
         <module>tika-parser-sqlite3-module</module>
         <module>tika-parser-scientific-module</module>
-        <module>tika-parsers-extended-integration-tests</module>
+        <!-- <module>tika-parsers-extended-integration-tests</module> -->
     </modules>
 
     <build>
