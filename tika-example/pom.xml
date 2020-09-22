@@ -40,17 +40,6 @@
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-app</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>tika-parsers</artifactId>
-          <groupId>org.apache.tika</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tika</groupId>
-      <artifactId>tika-parsers</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tika</groupId>
@@ -70,13 +59,19 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>tika-langdetect</artifactId>
+      <artifactId>tika-langdetect-optimaize</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-eval</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.tika</groupId>
@@ -86,21 +81,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tika</groupId>
-      <artifactId>tika-parsers</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
-      <version>2.0</version>
+      <version>${javax.jcr.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-jcr-server</artifactId>
-      <version>2.21.1</version>
+      <version>${jackrabbit.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.tika</groupId>
@@ -127,7 +115,7 @@
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-core</artifactId>
-      <version>2.21.1</version>
+      <version>${jackrabbit.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.tika</groupId>
@@ -156,7 +144,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>5.2.7.RELEASE</version>
+      <version>${spring.version}</version>
       <exclusions>
         <exclusion>
           <groupId>commons-logging</groupId>
