@@ -33,7 +33,7 @@
   <repositories>
     <repository>
       <id>local-repo</id>
-      <url>file:///Users/reshavabraham/work/nlm-tika/tika/tika-parsers/target3</url>
+      <url>file:///home/yi_zhang/nlm/tika/tika-parsers/target3</url>
     </repository>
   </repositories>
 
